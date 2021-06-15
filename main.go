@@ -23,80 +23,15 @@ type Chapters struct {
 
 // Question model
 type Questions struct {
-	ID         uint   `json:"id"`
-	Chapter_ID uint   `json:"chapter_id"`
-	Question   string `json:"question"`
-	Op1        string `json:"op1"`
-	Op2        string `json:"op2"`
-	Op3        string `json:"op3"`
-	Op4        string `json:"op4"`
-	Ans        uint   `json:"ans"`
+	ID       uint   `json:"id"`
+	Chapter  string `json:"chapter_id"`
+	Question string `json:"question"`
+	Op1      string `json:"op1"`
+	Op2      string `json:"op2"`
+	Op3      string `json:"op3"`
+	Op4      string `json:"op4"`
+	Ans      uint   `json:"ans"`
 }
-
-//User model
-// type User struct {
-// 	ID        uint   `json:"id"`
-// 	Firstname string `json:"firstname"`
-// 	Lastname  string `json:"lastname"`
-// 	City      string `json:"city"`
-// 	Username  string `json:"username"`
-// 	Emailid   string `json:"emailid"`
-// 	Password  string `json:"password"`
-// 	Points    uint64 `json:"points"`
-// 	Role      uint   `json:"role"` // 1 for admin and 0 for user
-// }
-
-// //Genre model
-// type Genre struct {
-// 	ID          uint   `json:"id"`
-// 	Genre_Name  string `json:"genre_name"`
-// 	Num_Quizzes uint   `json:"num_quizzes"`
-// }
-
-// //Quiz model
-// type Quiz struct {
-// 	ID            uint   `json:"id"`
-// 	Genre         string `json:"genre"`
-// 	Quiz_Num      uint   `json:"quiz_num"`
-// 	Num_Questions uint   `json:"num_questions"`
-// }
-
-// //Question model
-// type Question struct {
-// 	ID       uint   `json:"id"`
-// 	Question string `json:"question"`
-// 	Op1      string `json:"op1"`
-// 	Op2      string `json:"op2"`
-// 	Op3      string `json:"op3"`
-// 	Op4      string `json:"op4"`
-// 	Ans      uint   `json:"ans"`
-// }
-
-// //Points model
-// type Points struct {
-// 	ID       uint   `json:"id"`
-// 	Username string `json:"username"`
-// 	Genre    string `json:"genre"`
-// 	Points   uint64 `json:"points", gorm:"default:0"`
-// }
-
-// //History model
-// type History struct {
-// 	ID        uint   `json:"id"`
-// 	Username  string `json:"username"`
-// 	Genre     string `json:"genre"`
-// 	Quiz_Num  uint   `json:"quiz_num"`
-// 	Score     uint64 `json:"score"`
-// 	Timestamp string `json:"timestamp"`
-// }
-
-// //Answer received
-// type Answer struct {
-// 	Ans1 bool `json:"ans1"`
-// 	Ans2 bool `json:"ans2"`
-// 	Ans3 bool `json:"ans3"`
-// 	Ans4 bool `json:"ans4"`
-// }
 
 func main() {
 	db, err = gorm.Open("mysql", Config.DbURL(Config.BuildDBConfig()))
@@ -107,7 +42,13 @@ func main() {
 
 	db.AutoMigrate(&Chapters{}, &Questions{})
 
+	c1 := Chapters{Class: 9, Subject: 1, Chapter: "Laws of Motion"}
+	c2 := Chapters{Class: 10, Subject: 1, Chapter: "Optics"}
+	db.Create(&c1)
+	db.Create(&c2)
+
 	r := gin.Default()
+	r.LoadHTMLGlob("templates/*")
 	r.GET("/classes", AllClasses)
 	r.GET("/classes/:class_id", GetSubjects)
 	r.GET("/classes/:class_id/:subject_id", GetChapters)
@@ -116,34 +57,10 @@ func main() {
 	r.Use((cors.Default()))
 	r.Run(":8080")
 
-	// r.POST("/signup", Signup)
-	// r.POST("/signin", Signin)
-	// r.GET("/points/:username", GetUserPoints)
-
-	// // only admin
-	// r.GET("/people/:username", GetPeople)
-	// r.DELETE("/people/:username/:id", DeleteUser)
-	// r.POST("/quiz/:username", CreateQuiz)
-	// r.DELETE("/quiz/:username/:id", DeleteQuiz)
-	// r.POST("/question/:username", CreateQuestion)
-	// r.DELETE("/question/:username/:id", DeleteQuestion)
-	// r.PUT("/question/:id", UpdateQuestion)
-	// r.GET("/question/:id", GetQuestion)
-
-	// // any user
-	// r.GET("/quizdetails/:id", GetQuizDetails)
-	// r.GET("/quiz", GetAllQuiz)
-	// r.GET("/genres", GetGenres)
-	// r.GET("/quizzes/:genre", GetNumQuizzes)
-	// r.GET("/quiz/:id", GetQuiz)
-	// r.GET("/leaderboard", GetLeaderboard)
-	// r.GET("/leaderboard/:genre", GetLeaderboardByGenre)
-	// r.GET("/history/:username", GetHistory)
-	// r.GET("/quizevaluate/:username/:id/:points", EvaluateQuiz)
-
 }
 
 func AllClasses(c *gin.Context) {
+	c.HTML(200, "classes.html", gin.H{"message": "rendering html"})
 	c.JSON(200, gin.H{"message": "all classes"})
 }
 
@@ -152,11 +69,12 @@ func GetChapters(c *gin.Context) {
 }
 
 func GetSubjects(c *gin.Context) {
+	c.HTML(200, "subjects.html", gin.H{"message": "rendering html"})
 	c.JSON(200, gin.H{"message": "all subjects"})
 }
 
 func GetTest(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "all test"})
+	c.JSON(200, gin.H{"message": "test for the choosen"})
 }
 
 //Signup user
