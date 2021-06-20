@@ -1,0 +1,22 @@
+{{template "header"}}
+
+<h1>
+    <center>{{ .title}}</center>
+</h1>
+<h2>Choose the correct option</h2>
+<p><b>Question {{.queNum}}</b> {{.question.Question}}</p>
+<ol>
+        <form action="/nextQuestion" method="POST">
+            <input type="hidden" name="id" value="{{.question.ID}}">
+            <input type="hidden" name="answer" value="{{.question.Answer}}">
+            <li><button type="submit" name="answerSubmitted" value="1" class="btn btn-primary"> {{.question.OptionA}} </button></li>
+            <li><button type="submit" name="answerSubmitted" value="2" class="btn btn-primary"> {{.question.OptionB}} </button></li>
+            <li><button type="submit" name="answerSubmitted" value="3" class="btn btn-primary"> {{.question.OptionC}} </button></li>
+            <li><button type="submit" name="answerSubmitted" value="4" class="btn btn-primary"> {{.question.OptionD}} </button></li>
+        </form> 
+</ol>
+
+
+
+
+{{template "footer"}}

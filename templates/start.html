@@ -1,0 +1,21 @@
+{{template "header"}}
+<h1>
+<center>{{ .title}}</center>
+</h1>
+<div class="container">
+    <ol>
+        <li>Choose your class, a subject and a chapter for test.</li>
+        <li>As soon as you choose a chapter test will start.</li>
+        <li>10 Question MCQ test.</li>
+        <li>Only one question will be visible at a time.</li>
+        <li>One attempt per question.</li>
+        <li>Choosing an option for a question will take you to next question.</li>
+        <li>Based on your answer you'll get your result after the last (10th) Question.</li>
+    </ol>
+        <form action="/classes" method="GET">
+            <button type="submit" class="btn btn-primary"> START </button>
+        </form> 
+    
+</div>
+
+{{template "footer"}}
