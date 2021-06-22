@@ -88,7 +88,8 @@ func UpdateQuestion(question entity.Questions, tx *gorm.DB) {
 
 func AddTest(chapter entity.Chapters, tx *gorm.DB) uint64 {
 	var testID uint64
-	rowsAffected := tx.Raw("insert into tests(score) values (0) returning id").Scan(&testID).RowsAffected
+	tx.Raw("insert into tests(score) values(0)")
+	rowsAffected := tx.Raw("SELECT LAST_INSERT_ID()").Scan(&testID).RowsAffected
 	if rowsAffected != 1 {
 		tx.Rollback()
 		panic("Error while adding entry in tests table")
