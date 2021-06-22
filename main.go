@@ -25,6 +25,8 @@ var (
 func main() {
 	server := gin.Default()
 	server.LoadHTMLGlob("templates/*.html")
+
+	//server.POST("/signup", Signup)
 	server.GET("/start", Init)
 	server.GET("/classes", Classes)
 	server.POST("/subject", Subject)
@@ -92,7 +94,7 @@ func Question(ctx *gin.Context) {
 
 func NextQuestion(ctx *gin.Context) {
 	if queNum == 10 {
-		ctx.Redirect(http.StatusTemporaryRedirect, "/test/score")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/score")
 		return
 	}
 	queNum++
