@@ -17,6 +17,8 @@ type TestController interface {
 	NextQuestion(queNum int) entity.Questions
 	UpdateScore(ctx *gin.Context, queNum int)
 	UpdateTest() int
+	Signup(ctx *gin.Context) entity.User
+	Login(ctx *gin.Context) entity.User
 }
 
 type testController struct {
@@ -29,6 +31,18 @@ func NewTestController(service service.TestService, cache cache.TestCache) TestC
 		service: service,
 		cache:   cache,
 	}
+}
+
+func (con *testController) Signup(ctx *gin.Context) entity.User {
+	var user entity.User
+	ctx.BindJSON(&user)
+	return con.service.Signup(ctx, user)
+}
+
+func (con *testController) Login(ctx *gin.Context) entity.User {
+	var user entity.User
+	ctx.BindJSON(&user)
+	return con.service.Login(ctx, user)
 }
 
 func (con *testController) AllClasses() []entity.Classes {

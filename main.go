@@ -26,7 +26,8 @@ func main() {
 	server := gin.Default()
 	server.LoadHTMLGlob("templates/*.html")
 
-	//server.POST("/signup", Signup)
+	server.POST("/signup/", Signup)
+	server.POST("/login/", Login)
 	server.GET("/start", Init)
 	server.GET("/classes", Classes)
 	server.POST("/subject", Subject)
@@ -39,6 +40,18 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+func Signup(ctx *gin.Context) {
+	user := testController.Signup(ctx)
+	ctx.Header("access-control-allow-origin", "*")
+	ctx.JSON(http.StatusOK, user)
+}
+
+func Login(ctx *gin.Context) {
+	user := testController.Login(ctx)
+	ctx.Header("access-control-allow-origin", "*")
+	ctx.JSON(http.StatusOK, user)
 }
 
 func Init(ctx *gin.Context) {

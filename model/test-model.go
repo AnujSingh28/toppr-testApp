@@ -1,9 +1,12 @@
 package model
 
 import (
+	"fmt"
+	"net/http"
 	"test-app/Config"
 	"test-app/entity"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -15,6 +18,8 @@ type TestModel interface {
 	FetchChapter(subject entity.Subjects) []entity.Chapters
 	FetchQuestions(chapter entity.Chapters) ([]entity.Questions, uint64)
 	UpdateTest(testID uint64, score int)
+	Signup(ctx *gin.Context, user entity.User) entity.User
+	Login(ctx *gin.Context, user entity.User) entity.User
 }
 
 type database struct {
@@ -26,7 +31,7 @@ func NewTestModel() TestModel {
 	if err != nil {
 		panic("Failed to connect database")
 	}
-	db.AutoMigrate(&entity.Classes{}, &entity.Subjects{}, &entity.Chapters{}, &entity.Questions{}, &entity.Tests{},
+	db.AutoMigrate(&entity.User{}, &entity.Classes{}, &entity.Subjects{}, &entity.Chapters{}, &entity.Questions{}, &entity.Tests{},
 		&entity.ClassSubs{}, &entity.SubChaps{}, &entity.ChapQues{}, &entity.ChapTests{})
 	if err != nil {
 		panic("Failed to Automigrate")
@@ -34,6 +39,39 @@ func NewTestModel() TestModel {
 	return &database{
 		connection: db,
 	}
+}
+
+func (db *database) Signup(ctx *gin.Context, user entity.User) entity.User {
+	fmt.Println(ctx.Params.ByName("username"))
+	if user.FirstName == "" || user.LastName == "" || user.Password == "" || user.Username == "" {
+		ctx.AbortWithStatus(400)
+	}
+	rowsAffected := db.connection.Create(&user).RowsAffected
+	if rowsAffected == 0 {
+		panic("Error while adding user")
+	}
+	ctx.Header("access-control-allow-origin", "*")
+	ctx.JSON(http.StatusOK, user)
+	return user
+}
+
+func (db *database) Login(ctx *gin.Context, user entity.User) entity.User {
+	var tempUser entity.User
+	if err := db.connection.Where("username = ?", user.Username).First(&tempUser).Error; err != nil {
+		ctx.Header("access-control-allow-origin", "*")
+		ctx.AbortWithStatus(http.StatusNotFound)
+		fmt.Println(err)
+	} else {
+		if tempUser.Password == user.Password {
+			fmt.Println("Authenticated")
+			ctx.Header("access-control-allow-origin", "*")
+			ctx.JSON(http.StatusOK, user)
+		} else {
+			ctx.Header("access-control-allow-origin", "*")
+			ctx.JSON(401, gin.H{"authenticated": false})
+		}
+	}
+	return user
 }
 
 func (db *database) AllClasses() []entity.Classes {

@@ -3,6 +3,8 @@ package service
 import (
 	"test-app/entity"
 	"test-app/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 type TestService interface {
@@ -11,6 +13,8 @@ type TestService interface {
 	FetchChapter(entity.Subjects) []entity.Chapters
 	FetchQuestions(entity.Chapters) ([]entity.Questions, uint64)
 	UpdateTest(testID uint64, score int)
+	Signup(ctx *gin.Context, user entity.User) entity.User
+	Login(ctx *gin.Context, user entity.User) entity.User
 }
 
 type testService struct {
@@ -21,6 +25,14 @@ func New(mod model.TestModel) TestService {
 	return &testService{
 		testModel: mod,
 	}
+}
+
+func (service *testService) Signup(ctx *gin.Context, user entity.User) entity.User {
+	return service.testModel.Signup(ctx, user)
+}
+
+func (service *testService) Login(ctx *gin.Context, user entity.User) entity.User {
+	return service.testModel.Login(ctx, user)
 }
 
 func (service *testService) AllClasses() []entity.Classes {

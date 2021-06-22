@@ -1,5 +1,13 @@
 package entity
 
+type User struct {
+	ID        uint   `json:"id" gorm:"primary_key"`
+	Username  string `json:"username" gorm:"unique"`
+	Password  string `json:"password"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+}
+
 type Classes struct {
 	ID   uint64 `json:"id" gorm:"primary_key;auto_increment"`
 	Name string `json:"name" binding:"min=1,max=100" gorm:"type:varchar(100)"`
